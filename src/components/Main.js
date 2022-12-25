@@ -6,8 +6,23 @@ import Card from './Card';
 const Main = () => {
   const [data, setData] = useState(dummyData);
 
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+
+    // 同じカラム内での入れ替え
+    const sourceColIndex = data.findIndex((e) => e.id === source.droppableId);
+    const sourceCol = data[sourceColIndex];
+    const sourceTask = [...sourceCol.tasks];
+    // タスクを削除
+    const [removed] = sourceTask.splice(source.index, 1);
+    // タスクを追加
+    sourceTask.splice(destination.index, 0, removed);
+    data[sourceColIndex].tasks = sourceTask;
+    setData(data);
+  };
+
   return (
-    <DragDropContext>
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="trello">
         {data.map((section) => (
           <Droppable key={section.id} droppableId={section.id}>
